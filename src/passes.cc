@@ -13,9 +13,10 @@
 #include "clifford.h"
 #include "decompose_toffoli.h"
 #include "cqasm/cqasm_reader.h"
-#include "visualizer.h"
 #include "latency_compensation.h"
 #include "buffer_insertion.h"
+#include "visualizer.h"
+         
 #include <iostream>
 #include <chrono>
 
@@ -479,8 +480,7 @@ void VisualizerPass::runOnProgram(ql::quantum_program *program)
 {
     DOUT("run VisualizerPass with name = " << getPassName() << " on program " << program->name);
     
-    ql::Layout layout;
-    ql::visualize(program, layout);
+    ql::visualize(program, getPassOptions()->getOption("visualizer_config_path"));
 }
 
     /**
@@ -500,6 +500,7 @@ PassOptions::PassOptions(std::string app_name)
     opt_name2opt_val["hwconfig"] = "none";
     opt_name2opt_val["nqubits"] = "100";
     opt_name2opt_val["eqasm_compiler_name"] = "cc_light_compiler";
+    opt_name2opt_val["visualizer_config_path"] = "visualizer_config.json";
 
     // add options with default values and list of possible values
     app->add_set_ignore_case("--skip", opt_name2opt_val["skip"], {"yes", "no"}, "skip running the pass", true);
@@ -509,6 +510,7 @@ PassOptions::PassOptions(std::string app_name)
     app->add_option("--hwconfig", opt_name2opt_val["hwconfig"], "path to the platform configuration file", true);
     app->add_option("--nqubits", opt_name2opt_val["nqubits"], "number of qubits used by the program", true);
     app->add_set_ignore_case("--eqasm_compiler_name", opt_name2opt_val["eqasm_compiler_name"], {"qumis_compiler", "cc_light_compiler", "eqasm_backend_cc"}, "Set the compiler backend", true);
+    app->add_option("--visualizer_config_path", opt_name2opt_val["visualizer_config_path"], "path to the visualizer configuration file", true);
 }
 
     /**
