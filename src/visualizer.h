@@ -27,17 +27,20 @@ const std::array<unsigned char, 3> red = {{ 255, 105, 97 }};
 
 struct Cycles
 {
-	// Cycle number row.
-	bool showCycleNumbers = true;
+	// Cycle label row.
+	bool showCycleLabels = true;
 	bool showCyclesInNanoSeconds = false;
-	unsigned int rowHeight = 24;
-	unsigned int fontHeight = 13;
+	int rowHeight = 24;
+	int fontHeight = 13;
 	std::array<unsigned char, 3> fontColor = black;
 
 	// Whether the cycles should be compressed or gate duration outlines should be shown on the qubits.
 	bool compressCycles = false;
+	bool cutEmptyCycles = true;
+	int emptyCycleThreshold = 3;
+	int cutCycleWidth = 16;
 	bool showGateDurationOutline = true;
-	unsigned int gateDurationGap = 2;
+	int gateDurationGap = 2;
 	float gateDurationAlpha = 0.1f;
 	float gateDurationOutLineAlpha = 0.3f;
 	std::array<unsigned char, 3> gateDurationOutlineColor = black;
@@ -48,30 +51,30 @@ struct BitLines
 	// Labels.
 	bool drawLabels = true;
 	//TODO: set this to 0 automatically if drawLabels is false?
-	unsigned int labelColumnWidth = 32;
-	unsigned int fontHeight = 13;
+	int labelColumnWidth = 32;
+	int fontHeight = 13;
 	std::array<unsigned char, 3> qBitLabelColor = {{ 0, 0, 0 }};
 	std::array<unsigned char, 3> cBitLabelColor = {{ 128, 128, 128 }};
 
 	// Lines.
 	bool showClassicalLines = true;
 	bool groupClassicalLines = true;
-	unsigned int groupedClassicalLineGap = 2;
+	int groupedClassicalLineGap = 2;
 	std::array<unsigned char, 3> qBitLineColor = {{ 0, 0, 0 }};
 	std::array<unsigned char, 3> cBitLineColor = {{ 128, 128, 128 }};
 };
 
 struct Grid
 {
-	unsigned int cellSize = 32;
-	unsigned int borderSize = 32;
+	int cellSize = 32;
+	int borderSize = 32;
 };
 
 struct Measurements
 {
 	bool drawConnection = true;
-	unsigned int lineSpacing = 2;
-	unsigned int arrowSize = 10;
+	int lineSpacing = 2;
+	int arrowSize = 10;
 };
 
 struct Layout
@@ -81,7 +84,9 @@ struct Layout
 	Grid grid;
 	Measurements measurements;
 
-	std::map<ql::gate_type_t, GateVisual> defaultGateVisuals
+	std::map<std::string, GateVisual> customGateVisuals;
+
+	const std::map<ql::gate_type_t, GateVisual> defaultGateVisuals
 	{
 		// TODO: use the proper symbol for dagger gates
 		// TODO: use the proper symbol for measurement gates
@@ -173,7 +178,6 @@ struct Layout
 	};
 };
 
-//void visualize(const ql::quantum_program* program, const Layout layout);
 void visualize(const ql::quantum_program* program, const std::string& configPath);
 
 } // ql
